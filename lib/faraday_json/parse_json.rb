@@ -1,4 +1,9 @@
-#require 'faraday_middleware/response_middleware'
+#
+# FaradayJSON
+# https://github.com/spriteCloud/faraday_json
+#
+# Copyright (c) 2015 spriteCloud B.V. and other FaradayJSON contributors.
+# All rights reserved.
 #
 module FaradayJSON
   # Public: Parse response bodies as JSON.
