@@ -4,9 +4,7 @@ This is a character encoding-aware JSON middleware for Faraday.
 [![Build Status](https://travis-ci.org/spriteCloud/faraday_json.svg)](https://travis-ci.org/spriteCloud/faraday_json)
 
 The default JSON middleware from lostisland/faraday_middleware is not character
-encoding aware; see lostisland/faraday_middleware#113
-
-This is problematic because by default, Ruby performs I/O based
+encoding aware. This is problematic because by default, Ruby performs I/O based
 on locale settings. If your locale specifies one character encoding, but the
 request or response body is encoded in another, you will end up with a Ruby
 string that pretends to be one encoding, but cannot correctly be interpreted as
