@@ -17,6 +17,6 @@ module FaradayJSON
 
     Faraday::Response.register_middleware \
       :json     => lambda { ParseJson },
-      :json_fix => lambda { ParseJson::MimeTypeFix }
+      :json_fix => lambda { ParseJsonMimeTypeFix }
   end
 end

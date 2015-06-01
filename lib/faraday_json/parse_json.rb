@@ -28,6 +28,15 @@ module FaradayJSON
       env[:body] = parse(env[:body])
     end
 
+    def parse(body)
+      begin
+        ::JSON.parse(body) unless body.strip.empty?
+      rescue StandardError, SyntaxError => err
+        raise err if err.is_a? SyntaxError and err.class.name != 'Psych::SyntaxError'
+        raise Faraday::Error::ParsingError, err
+      end
+    end
+
     def response_type(env)
       type = env[:response_headers][CONTENT_TYPE].to_s
       type = type.split(';', 2).first if type.index(';')
@@ -49,38 +58,6 @@ module FaradayJSON
     end
 
 
-    # Public: Override the content-type of the response with "application/json"
-    # if the response body looks like it might be JSON, i.e. starts with an
-    # open bracket.
-    #
-    # This is to fix responses from certain API providers that insist on serving
-    # JSON with wrong MIME-types such as "text/javascript".
-    class MimeTypeFix < ResponseMiddleware
-      MIME_TYPE = 'application/json'.freeze
-
-      def process_response(env)
-        old_type = env[:response_headers][CONTENT_TYPE].to_s
-        new_type = MIME_TYPE.dup
-        new_type << ';' << old_type.split(';', 2).last if old_type.index(';')
-        env[:response_headers][CONTENT_TYPE] = new_type
-      end
-
-      BRACKETS = %w- [ { -
-      WHITESPACE = [ " ", "\n", "\r", "\t" ]
-
-      def parse_response?(env)
-        super and BRACKETS.include? first_char(env[:body])
-      end
-
-      def first_char(body)
-        idx = -1
-        begin
-          char = body[idx += 1]
-          char = char.chr if char
-        end while char and WHITESPACE.include? char
-        char
-      end
-    end
 
     # DRAGONS
     module OptionsExtension
@@ -113,8 +90,42 @@ module FaradayJSON
         Faraday::RequestOptions.send(:include, OptionsExtension)
       end
     end
-  end
+  end # class ParseJson
+
+  # Public: Override the content-type of the response with "application/json"
+  # if the response body looks like it might be JSON, i.e. starts with an
+  # open bracket.
+  #
+  # This is to fix responses from certain API providers that insist on serving
+  # JSON with wrong MIME-types such as "text/javascript".
+  class ParseJsonMimeTypeFix < ParseJson
+    MIME_TYPE = 'application/json'.freeze
+
+    def process_response(env)
+      old_type = env[:response_headers][CONTENT_TYPE].to_s
+      new_type = MIME_TYPE.dup
+      new_type << ';' << old_type.split(';', 2).last if old_type.index(';')
+      env[:response_headers][CONTENT_TYPE] = new_type
+    end
+
+    BRACKETS = %w- [ { -
+    WHITESPACE = [ " ", "\n", "\r", "\t" ]
+
+    def parse_response?(env)
+      super and BRACKETS.include? first_char(env[:body])
+    end
+
+    def first_char(body)
+      idx = -1
+      begin
+        char = body[idx += 1]
+        char = char.chr if char
+      end while char and WHITESPACE.include? char
+      char
+    end
+  end # class ParseJson
+
 end
 
 # deprecated alias
-Faraday::Response::ParseJson = FaradayMiddleware::ParseJson
+Faraday::Response::ParseJson = FaradayJSON::ParseJson
