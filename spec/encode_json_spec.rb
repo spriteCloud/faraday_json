@@ -15,6 +15,7 @@ def encode(str, encoding)
   end
 end
 
+
 describe FaradayJSON::EncodeJson do
   let(:middleware) { described_class.new(lambda{|env| env}) }
 
@@ -330,6 +331,38 @@ describe FaradayJSON::EncodeJson do
         expect {
           process(encode('{"a":"ä"}', 'iso-8859-15'), 'application/json; charset=utf-8')
         }.to raise_exception
+      end
+    end
+
+    context "reading encoded files" do
+      FILES = {
+        'spec/data/iso8859-15_file.txt' => 'iso-8859-15',
+        'spec/data/utf16be_file.txt' => 'utf-16be',
+        'spec/data/utf16le_file.txt' => 'utf-16le',
+        'spec/data/utf8_file.txt' => 'utf-8',
+      }
+
+      FILES.each do |fname, enc|
+        # Read the string from file; read binary/with encoding. Ruby 1.8 will
+        # ignore this, but must still work.
+        data = File.new(fname, "rb:#{enc}").read
+
+        # Passing that data with a charset should do the right thing.
+        let(:result) {
+          process({:a => data})
+        }
+
+        it "encodes body" do
+          expect(result_body).to eq("{\"a\":\"Hellö, Wörld!\\n\"}")
+        end
+
+        it "adds content type" do
+          expect(result_type).to eq('application/json; charset=utf-8')
+        end
+
+        it "adds content length" do
+          expect(result_length).to eq(25)
+        end
       end
     end
   end
