@@ -1,6 +1,7 @@
 # Introduction
 This is a character encoding-aware JSON middleware for Faraday.
 
+[![Gem Version](https://badge.fury.io/rb/faraday_json.svg)](http://badge.fury.io/rb/faraday_json)
 [![Build Status](https://travis-ci.org/spriteCloud/faraday_json.svg)](https://travis-ci.org/spriteCloud/faraday_json)
 
 The default JSON middleware from lostisland/faraday_middleware is not character
@@ -28,3 +29,38 @@ This middleware fixes these issues rather brute-force by:
 When no charset is provided, all bets are off. The correct default would be to
 assume US-ASCII, but that may break some code. This middleware lets you override
 this default.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'faraday_json'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install faraday_json
+
+## Usage
+
+```ruby
+require 'faraday'
+require 'faraday_middleware'  # optional
+require 'faraday_json'        # replaces JSON handling from previous require
+
+client = Faraday.new('http://some_url') do |conn|
+  conn.request :json
+  conn.response :json
+
+  conn.adapter Faraday.default_adapter
+end
+
+client.post '/', :a => "röck döts"
+```
+
+1. `faraday_middleware` is not required for JSON handling.
+1. Require `faraday_json` *after* `faraday_middleware` to override the behaviour
+  from `faraday_middleware`.
