@@ -9,6 +9,7 @@
 require 'faraday'
 
 module FaradayJSON
+  autoload :EncodeJson,      'faraday_json/encode_json'
   autoload :ParseJson,       'faraday_json/parse_json'
 
   if Faraday::Middleware.respond_to? :register_middleware
