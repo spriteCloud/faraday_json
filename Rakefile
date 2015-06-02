@@ -23,6 +23,6 @@ task :quality do
   sh 'cane',
     '--abc-max=15',
     '--style-measure=110',
-    '--gte=coverage/covered_percent,90.21',
+    '--gte=coverage/covered_percent,88.89',
     '--max-violations=0'
 end
