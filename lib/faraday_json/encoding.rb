@@ -177,7 +177,11 @@ end # ruby > 1.8
   # Returns a canonical version of an encoding.
   def get_canonical_encoding(enc)
     if defined? ::Encoding and ::Encoding.respond_to? :find
-      return ::Encoding.find(enc).to_s.downcase
+      # Oh... Ruby 1.9.2 doesn't like passing an Encoding to find()...
+      if not enc.is_a? ::Encoding
+        enc = ::Encoding.find(enc)
+      end
+      return enc.to_s.downcase
     end
     return enc.downcase
   end
