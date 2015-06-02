@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'helper'
 require 'faraday_json/parse_json'
 
@@ -109,4 +111,107 @@ describe FaradayJSON::ParseJson, :type => :response do
       expect(response.body).to be_nil
     end
   end
+
+  ### Unicode test cases
+  # Ruby 1.8 will almost certainly fail if there is no charset given in a header.
+  # In Ruby >1.8, we have some more methods for guessing well.
+
+  ### All Ruby versions should work with a charset given.
+  context "with utf-8 encoding" do
+    it "parses json body" do
+      response = process(test_encode('{"a":"ü"}', 'utf-8'), 'application/json; charset=utf-8')
+      expect(response.body).to eq('a' => 'ü')
+    end
+  end
+
+  context "with utf-16be encoding" do
+    it "parses json body" do
+      response = process(test_encode('{"a":"ü"}', 'utf-16be'), 'application/json; charset=utf-16be')
+      expect(response.body).to eq('a' => 'ü')
+    end
+  end
+
+  context "with utf-16le encoding" do
+    it "parses json body" do
+      response = process(test_encode('{"a":"ü"}', 'utf-16le'), 'application/json; charset=utf-16le')
+      expect(response.body).to eq('a' => 'ü')
+    end
+  end
+
+  context "with iso-8859-15 encoding" do
+    it "parses json body" do
+      response = process(test_encode('{"a":"ü"}', 'iso-8859-15'), 'application/json; charset=iso-8859-15')
+      expect(response.body).to eq('a' => 'ü')
+    end
+  end
+
+  ### Ruby versions > 1.8 should be able to guess missing charsets at times.
+  if not RUBY_VERSION.start_with?("1.8")
+    context "with utf-8 encoding without content type" do
+      it "parses json body" do
+        response = process(test_encode('{"a":"ü"}', 'utf-8'))
+        expect(response.body).to eq('a' => 'ü')
+      end
+    end
+
+    context "with utf-16be encoding without content type" do
+      it "parses json body" do
+        response = process(test_encode('{"a":"ü"}', 'utf-16be'))
+        expect(response.body).to eq('a' => 'ü')
+      end
+    end
+
+    context "with utf-16le encoding without content type" do
+      it "parses json body" do
+        response = process(test_encode('{"a":"ü"}', 'utf-16le'))
+        expect(response.body).to eq('a' => 'ü')
+      end
+    end
+
+    context "with iso-8859-15 encoding without content type" do
+      it "parses json body" do
+        response = process(test_encode('{"a":"ü"}', 'iso-8859-15'))
+        expect(response.body).to eq('a' => 'ü')
+      end
+    end
+  end
+
+  ### Dealing with files in various encoding should ideally be easy
+  FILES = {
+    'spec/data/iso8859-15_file.json' => 'iso-8859-15',
+    'spec/data/utf16be_file.json' => 'utf-16be',
+    'spec/data/utf16le_file.json' => 'utf-16le',
+    'spec/data/utf8_file.json' => 'utf-8',
+  }
+
+if not RUBY_VERSION.start_with?("1.8")
+  FILES.each do |fname, enc|
+    context "reading #{enc} encoded file '#{fname}'" do
+      # Read the string from file; read binary/with encoding. Ruby 1.8 will
+      # ignore this, but must still work.
+      data = File.new(fname, "rb:#{enc}").read
+
+      # Passing that data with a charset should do the right thing.
+      it "decodes body" do
+        response = process(data)
+        expect(response.body).to eq('a' => "Hellö, Wörld!")
+      end
+    end
+  end
+end
+
+  FILES.each do |fname, enc|
+    context "reading #{enc} encoded file '#{fname}' as binary" do
+      # Read the string from file; read binary/with encoding. Ruby 1.8 will
+      # ignore this, but must still work.
+      data = File.new(fname, "rb").read
+
+      # Passing that data with a charset should do the right thing.
+      it "decodes body" do
+        response = process(data, "application/json; charset=#{enc}")
+        expect(response.body).to eq('a' => "Hellö, Wörld!")
+      end
+    end
+  end
+
 end
