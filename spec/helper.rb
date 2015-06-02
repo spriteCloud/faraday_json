@@ -59,3 +59,16 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+
+def test_encode(str, encoding)
+  if RUBY_VERSION.start_with?("1.8")
+    # Ruby 1.8 stores strings as bytes. Since this file is in UTF-8, we'll
+    # fix the FROM encoding to UTF-8.
+    require 'iconv'
+    return ::Iconv.conv(encoding, 'UTF-8', str)
+  else
+    # Yay, sanity!
+    return str.encode(encoding)
+  end
+end
