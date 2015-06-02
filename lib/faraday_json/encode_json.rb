@@ -60,7 +60,7 @@ module FaradayJSON
 
         # We'll add a content length, because otherwise we're relying on every
         # component down the line properly interpreting UTF-8 - that can fail.
-        env[:request_headers][CONTENT_LENGTH] ||= env[:body].bytesize
+        env[:request_headers][CONTENT_LENGTH] ||= env[:body].bytesize.to_s
 
         # Always base the encoding we're sending in the content type header on
         # the string encoding.
