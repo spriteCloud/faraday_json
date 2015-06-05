@@ -372,22 +372,5 @@ describe FaradayJSON::EncodeJson do
       end
     end
 
-  else # Ruby version > 1.8/Ruby version = 1.8
-
-    ### Test cases specifically for Ruby 1.8
-    context "issue #2: encoding an object with a contained array" do
-      data = {
-        :some_array => [1, 2, 3],
-      }
-
-      # Passing that data with a charset should do the right thing.
-      let(:result) {
-        process(data, "application/json; charset=utf-8")
-      }
-
-      it "encodes body" do
-        expect(result_body).to eq("{\"some_array\":[1,2,3]}")
-      end
-    end
   end # Ruby version > 1.8
 end
