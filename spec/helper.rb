@@ -72,3 +72,10 @@ def test_encode(str, encoding)
     return str.encode(encoding)
   end
 end
+
+TEST_FILES = {
+  'spec/data/iso8859-15_file.json' => 'iso-8859-15',
+  'spec/data/utf16be_file.json' => 'utf-16be',
+  'spec/data/utf16le_file.json' => 'utf-16le',
+  'spec/data/utf8_file.json' => 'utf-8',
+}

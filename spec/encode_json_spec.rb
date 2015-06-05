@@ -314,15 +314,7 @@ describe FaradayJSON::EncodeJson do
     end
 
     ### Dealing with files in various encoding should ideally be easy
-    FILES = {
-      'spec/data/iso8859-15_file.json' => 'iso-8859-15',
-      'spec/data/utf16be_file.json' => 'utf-16be',
-      'spec/data/utf16le_file.json' => 'utf-16le',
-      'spec/data/utf8_file.json' => 'utf-8',
-    }
-
-
-    FILES.each do |fname, enc|
+    TEST_FILES.each do |fname, enc|
       context "reading #{enc} encoded file '#{fname}'" do
         # Read the string from file; read binary/with encoding. Ruby 1.8 will
         # ignore this, but must still work.
@@ -347,7 +339,7 @@ describe FaradayJSON::EncodeJson do
       end
     end
 
-    FILES.each do |fname, enc|
+    TEST_FILES.each do |fname, enc|
       context "reading #{enc} encoded file '#{fname}' as binary" do
         # Read the string from file; read binary/with encoding. Ruby 1.8 will
         # ignore this, but must still work.
