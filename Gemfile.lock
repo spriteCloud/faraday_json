@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    faraday_json (0.1.0)
+    faraday_json (0.1.2)
       faraday (>= 0.7.4, < 0.10)
 
 GEM
