@@ -88,7 +88,7 @@ if RUBY_VERSION.start_with?("1.8")
     elsif data.is_a? Array
       transcoded = []
       data.each do |value|
-        transcoded << to_utf8(value, charest, opts)
+        transcoded << to_utf8(value, charset, opts)
       end
       return transcoded
     elsif data.is_a? String
