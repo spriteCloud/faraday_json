@@ -40,9 +40,6 @@ module FaradayJSON
       # Body will be in an unknown encoding. Use charset field to coerce it to
       # internal UTF-8.
       charset = response_charset(env)
-      if charset.nil? or charset.empty?
-        charset = 'utf-8'
-      end
 
       # We must ensure we're interpreting the body as the right charset. First,
       # strip the BOM (if any).
