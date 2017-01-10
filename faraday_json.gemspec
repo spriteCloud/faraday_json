@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jens Finkhaeuser"]
   spec.email         = ["foss@spritecloud.com"]
   spec.description   = %q{This is a character encoding-aware JSON middleware for Faraday.}
-  spec.summary       = %q{This is a character encoding-aware JSON middleware for Faraday.}
+  spec.summary       = %q{A character encoding-aware JSON middleware for Faraday.}
   spec.homepage      = "https://github.com/spriteCloud/faraday_json"
   spec.license       = "MITNFA"
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.13"
-  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rake", "~> 12.0"
 
   spec.add_dependency 'faraday', "~> 0.10"
 end
