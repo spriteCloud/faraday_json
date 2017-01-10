@@ -36,3 +36,5 @@ build/
 
 # Editor files
 .*.sw*
+
+.idea
